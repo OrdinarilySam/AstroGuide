@@ -25,6 +25,13 @@ module.exports = (client) => {
           }
           break;
 
+        case "guild":
+          for (const file of eventFiles) {
+            const event = require(`../../events/${folder}/${file}`);
+
+            client.on(event.name, (...args) => event.execute(...args));
+          }
+
         default:
           break;
       }
