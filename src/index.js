@@ -1,34 +1,21 @@
-require("dotenv").config()
-const { Client, IntentsBitField } = require('discord.js');
+require("dotenv").config();
+const { token } = process.env;
+const { Client, Collection, GatewayIntentBits } = require("discord.js");
+const fs = require("fs");
 
-const bot = new Client({
-    intents: [
-        IntentsBitField.Flags.Guilds,
-        IntentsBitField.Flags.GuildMembers,
-        IntentsBitField.Flags.GuildMessages,
-        IntentsBitField.Flags.MessageContent
-    ]
-});
+const client = new Client({ intents: GatewayIntentBits.Guilds });
+client.commands = new Collection();
+client.commandArray = [];
 
-bot.on('ready', (client) => {
-    console.log(`${client.user.tag} is online.`)
-})
+const functionFolders = fs.readdirSync("./src/functions");
+for (const folder of functionFolders) {
+  const functionFiles = fs
+    .readdirSync(`./src/functions/${folder}`)
+    .filter((file) => file.endsWith(".js"));
+  for (const file of functionFiles)
+    require(`./functions/${folder}/${file}`)(client);
+}
 
-bot.on('guildMemberAdd', (member) => {
-    console.log(`${member.user.tag} joined the server.`)
-    bot.channels.fetch(member.guild.systemChannelId)
-        .then(channel => channel.send(`${member.user} joined the server.`))
-
-
-})
-
-bot.on('messageCreate', message => {
-    if(message.author.bot){
-        return
-    }
-    if(message.content == "purge"){
-        message.channel.bulkDelete(100)
-    }
-})
-
-bot.login(process.env.TOKEN);
+client.handleEvents();
+client.handleCommands();
+client.login(token);
