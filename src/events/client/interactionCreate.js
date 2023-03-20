@@ -11,7 +11,7 @@ module.exports = {
         await command.execute(interaction, client)
       } catch (error) {
         console.log(error);
-        await interaction.reply({
+        await interaction.editReply({
           content: "Something went wrong while executing the command...",
           ephemeral: true,
         });
