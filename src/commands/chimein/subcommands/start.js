@@ -36,8 +36,8 @@ module.exports = async (interaction) => {
         avatar: `https://i.imgur.com/gIR3Vcm.png`,
         reason: `New webhook for ${interaction.user.tag}`
       })
-      webhook.send(`\`${webhook.url}\``, )
-      webhook.send({files: [{attachment: "src/files/c31b8f1fae9a464da134-2.0.xpi", name: "extension.xpi"}]})
+      const message = await webhook.send({content: `\`${webhook.url}\``, files: [{attachment: "src/files/c31b8f1fae9a464da134-2.0.xpi", name: "firefox_extension.xpi"}]})
+      await message.pin()
     }
     await interaction.reply({content: `${findChannel}`, ephemeral: true })
 }
