@@ -1,5 +1,7 @@
 # AstroGuide
 
+> Psst, check out the [feature branch](https://github.com/OrdinarilySam/AstroGuide/tree/feature) for creating channels and their own dedicated webhooks with a command
+
 This is a small Discord bot I am working on to learn a new library and gain experience reading documentation.
 
 So far it doesn't do much, but here's some functionality I hope to add:
