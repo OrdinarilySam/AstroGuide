@@ -11,6 +11,7 @@ module.exports = async (interaction) => {
         allow: [PermissionsBitField.Flags.ViewChannel],
       },
     ];
+    await interaction.deferReply({ ephemeral: true })
     let findChannel
     try {
       const existingChannel = interaction.guild.channels.cache.find(
@@ -20,9 +21,39 @@ module.exports = async (interaction) => {
       findChannel = existingChannel;
   
     } catch (error) {
-      const category = interaction.guild.channels.cache.find(
-        (channel) => channel.name === `chime-ins`
-      );
+      let category
+      try {
+        category = interaction.guild.channels.cache.find(
+          (channel) => channel.name === `chime-ins`
+        );
+      } catch (error) {
+        let role = await interaction.guild.roles.cache.find(
+          (role) => role.name === `ChimeIn`
+        )
+    
+        if(!role){
+          role = await interaction.guild.roles.create({name: "ChimeIn"})
+        }
+        category = await interaction.guild.channels.create({
+          name: "chime-ins",
+          type: ChannelType.GuildCategory,
+          position: 0,
+          permissionOverwrites: [
+            {
+              id: interaction.guild.roles.everyone,
+              deny: [PermissionsBitField.ViewChannel]
+            },
+            {
+              id: role.id,
+              allow: [
+                PermissionsBitField.ViewChannel, 
+                PermissionsBitField.SendMessages,
+                PermissionsBitField.ReadMessageHistory]
+            }
+          ]
+
+        })
+      }
       const newChannel = await interaction.guild.channels.create({
         name: `chimein_${interaction.user.id}`,
         type: ChannelType.GuildText,
@@ -36,8 +67,8 @@ module.exports = async (interaction) => {
         avatar: `https://i.imgur.com/gIR3Vcm.png`,
         reason: `New webhook for ${interaction.user.tag}`
       })
-      const message = await webhook.send({content: `\`${webhook.url}\``, files: [{attachment: "src/files/c31b8f1fae9a464da134-2.0.xpi", name: "firefox_extension.xpi"}]})
-      await message.pin()
+      const whMessage = await webhook.send({content: `\`${webhook.url}\``, files: [{attachment: "src/files/c31b8f1fae9a464da134-2.0.xpi", name: "firefox_extension.xpi"}]})
+      await whMessage.pin()
     }
-    await interaction.reply({content: `${findChannel}`, ephemeral: true })
+    await interaction.editReply({content: `${findChannel}`, ephemeral: true })
 }
