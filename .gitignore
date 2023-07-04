@@ -2,3 +2,5 @@
 /node_modules
 /src/data.json
 /files/c31b8f1fae9a464da134-2.0.xpi
+.DS_Store
+AutoChimeIn*
